@@ -18,7 +18,8 @@
     {
       "matches": ["<all_urls>"],
       "js": ["foo.js"],
-      "run_at": "document_start"
+      "run_at": "document_end",
+      "all_frames": true
     }
   ],
   "web_accessible_resources": ["sinon.js", "foo.js", "bar.js"]

@@ -32,4 +32,4 @@ window.addEventListener('message', function(event) {
   }
 
   chrome.runtime.sendMessage(message);
-});
+}, false);

@@ -14,22 +14,20 @@ document.querySelector('#enableXHR').addEventListener('click', function() {
   sendObjectToInspectedPage({action: "script", content: "bar.js"});
 
   var command = `
-  function sendObjectToDevTools(message) {
-    // The callback here can be used to execute something on receipt
-    chrome.extension.sendMessage(message, function(message){});
-  }
-  Object.observe(window.requests, function() {
-    sendObjectToDevTools({content: "on change"});
-  })
+  // Object.observe(window.requests, function() {
+  //   document.__sendObjectToDevTools({content: "on change"});
+  // })
   this.xhr = sinon.useFakeXMLHttpRequest();\
   this.xhr.onCreate = function (xhr) {\
     debugger;
     requests.push(xhr);
-    chrome.runtime.sendMessage('` + id + `', {hello: 'world'}, function() {
-      console.log('sent a message!!');
-    });
-    var port = chrome.runtime.connect('` + id +`');
-    port.postMessage({hello: 'there'});
+    window.postMessage({hello: JSON.stringify(xhr)}, '*');
+    // chrome.extension.sendMessage('` + id + `', {hello: 'world'}, function() {
+    //   console.log('sent a message!!');
+    // });
+    // var port = chrome.runtime.connect('` + id +`');
+    // port.postMessage({hello: 'there'});
+    // document.__sendObjectToDevTools({content: "on change"});
   };
   `;
 

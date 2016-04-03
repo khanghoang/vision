@@ -13,17 +13,6 @@ chrome.extension.onConnect.addListener(function (port) {
 
     if(message.tabId && message.content) {
 
-      if(message.action === 'eval') {
-        debugger;
-        chrome.devtools.inspectedWindow.eval(
-          message.content,
-          function(result, isException) {
-            console.log(results, isException);
-          }
-        );
-        return;
-      }
-
       if (message.action === 'message') {
         console.log('message', message.content);
         return;
@@ -45,6 +34,7 @@ chrome.extension.onConnect.addListener(function (port) {
       // This accepts messages from the inspectedPage and 
       // sends them to the panel
     } else {
+      console.log('xhr data', message.hello);
       port.postMessage(message);
     }
     sendResponse(message);
@@ -58,13 +48,13 @@ chrome.extension.onConnect.addListener(function (port) {
   });
 
   port.onMessage.addListener(function (message) {
-    sendResponse({foo: 'bar'});
     port.postMessage(message);
   });
 
 });
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  sendResponse({foo: 'bar'});
+  console.log('on listener message');
   return true;
 });
 
