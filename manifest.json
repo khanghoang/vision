@@ -1,17 +1,25 @@
 {
-    "name": "DevToolsPanel",
-    "version": "0.1",
-    "description": "A bare-bones example of communication between devtools and an inspected page",
-    "devtools_page": "devtools.html",
-    "background": {
-        "scripts": [
-            "background.js"
-        ]
-    },
-    "permissions": [
-        "tabs", 
-        "http://*/*",
-        "https://*/*"
-    ],
-    "manifest_version": 2
+  "name": "DevToolsPanel",
+  "version": "0.1",
+  "description": "A bare-bones example of communication between devtools and an inspected page",
+  "devtools_page": "devtools.html",
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+  "permissions": [
+    "tabs", 
+    "http://*/*",
+    "https://*/*"
+  ],
+  "manifest_version": 2,
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["foo.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": ["sinon.js"]
 }

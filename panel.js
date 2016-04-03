@@ -5,7 +5,37 @@
 // chrome.extension.*
 
 document.querySelector('#executescript').addEventListener('click', function() {
-    sendObjectToInspectedPage({action: "code", content: "console.log('Inline script executed')"});
+  sendObjectToInspectedPage({action: "code", content: "console.log('Inline script executed')"});
+}, false);
+
+document.querySelector('#enableXHR').addEventListener('click', function() {
+  var command = `
+  this.xhr = sinon.useFakeXMLHttpRequest();
+  `;
+
+  chrome.devtools.inspectedWindow.eval(
+    command,
+    function(result, isException) {
+      console.log(results, isException);
+    }
+  );
+
+  sendObjectToInspectedPage({action: "code", content: "console.log('ENABLED')"});
+}, false);
+
+document.querySelector('#disableXHR').addEventListener('click', function() {
+  var command = `
+  xhr.restore();
+  `;
+
+  chrome.devtools.inspectedWindow.eval(
+    command,
+    function(result, isException) {
+      console.log(results, isException);
+    }
+  );
+
+  sendObjectToInspectedPage({action: "code", content: "console.log('RESTORED')"});
 }, false);
 
 document.querySelector('#insertscript').addEventListener('click', function() {
