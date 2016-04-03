@@ -64,3 +64,37 @@ document.querySelector('#insertmessagebutton').addEventListener('click', functio
     sendObjectToInspectedPage({action: "code", content: "document.body.innerHTML='<button>Send message to DevTools</button>'"});
     sendObjectToInspectedPage({action: "script", content: "messageback-script.js"});
 }, false);
+
+var backgroundPageConnection = chrome.runtime.connect({
+  name: 'panel'
+});
+
+backgroundPageConnection.onMessage.addListener(function(msg) {
+  add('button');
+});
+
+function add(type) {
+    //Create an input type dynamically.   
+    var element = document.createElement("input");
+    //Assign different attributes to the element. 
+    element.type = type;
+    element.value = type; // Really? You want the default value to be the type string?
+    element.name = type;  // And the name too?
+    element.onclick = function() { // Note this is a function
+      var command = `
+      window.requests[0].respond(200, { "Content-Type": "application/json" },
+                                 '[{ "id": 12, "comment": "Hey there" }]');
+      `;
+
+      chrome.devtools.inspectedWindow.eval(
+        command,
+        function(result, isException) {
+          console.log(result, isException);
+        }
+      );
+    };
+
+    var foo = document.getElementById("container");
+    //Append the element in page (in span).
+    foo.appendChild(element);
+}

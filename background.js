@@ -9,8 +9,6 @@ chrome.extension.onConnect.addListener(function (port) {
 
   var extensionListener = function (message, sender, sendResponse) {
 
-    debugger;
-
     if(message.tabId && message.content) {
 
       if (message.action === 'message') {
@@ -53,8 +51,25 @@ chrome.extension.onConnect.addListener(function (port) {
 
 });
 
+var connections = {};
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  console.log('on listener message');
+  console.log('incoming message from injected script');
+  console.log(request);
+
+  // Messages from content scripts should have sender.tab set
+  if (sender.tab) {
+    var tabId = sender.tab.id;
+    if (tabId in connections) {
+      connections[tabId].postMessage(request);
+    } else {
+      console.log("Tab not found in connection list.");
+    }
+  } else {
+    console.log("sender.tab not defined.");
+  }
   return true;
 });
+
+
 
