@@ -11,12 +11,15 @@ document.querySelector('#executescript').addEventListener('click', function() {
 document.querySelector('#enableXHR').addEventListener('click', function() {
   var command = `
   this.xhr = sinon.useFakeXMLHttpRequest();
+  this.xhr.onCreate = function (xhr) {
+    requests.push(xhr);
+  };
   `;
 
   chrome.devtools.inspectedWindow.eval(
     command,
     function(result, isException) {
-      console.log(results, isException);
+      console.log(result, isException);
     }
   );
 

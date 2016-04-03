@@ -2259,5 +2259,6 @@ if (typeof sinon === "undefined") {
 }());
 
 this.xhr = null;
+window.requests = [];
 
 // sinon.useFakeXMLHttpRequest();
