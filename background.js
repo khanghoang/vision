@@ -9,6 +9,8 @@ chrome.extension.onConnect.addListener(function (port) {
 
   var extensionListener = function (message, sender, sendResponse) {
 
+    debugger;
+
     if(message.tabId && message.content) {
 
       if(message.action === 'eval') {
@@ -19,6 +21,11 @@ chrome.extension.onConnect.addListener(function (port) {
             console.log(results, isException);
           }
         );
+        return;
+      }
+
+      if (message.action === 'message') {
+        console.log('message', message.content);
         return;
       }
 
@@ -50,11 +57,14 @@ chrome.extension.onConnect.addListener(function (port) {
     chrome.extension.onMessage.removeListener(extensionListener);
   });
 
-  // port.onMessage.addListener(function (message) {
-  //     port.postMessage(message);
-  // });
+  port.onMessage.addListener(function (message) {
+    sendResponse({foo: 'bar'});
+    port.postMessage(message);
+  });
 
 });
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  sendResponse({foo: 'bar'});
   return true;
 });
+
