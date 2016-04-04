@@ -19,7 +19,6 @@ document.querySelector('#enableXHR').addEventListener('click', function() {
   // })
   this.xhr = sinon.useFakeXMLHttpRequest();\
   this.xhr.onCreate = function (xhr) {\
-    debugger;
     requests.push(xhr);
     window.postMessage({hello: JSON.stringify(xhr)}, '*');
     // chrome.extension.sendMessage('` + id + `', {hello: 'world'}, function() {
