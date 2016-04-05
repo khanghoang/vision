@@ -1,7 +1,7 @@
 {
-  "name": "DevToolsPanel",
+  "name": "Forecast",
   "version": "0.1",
-  "description": "A bare-bones example of communication between devtools and an inspected page",
+  "description": "Mock requests on the fly",
   "devtools_page": "devtools.html",
   "background": {
     "scripts": [

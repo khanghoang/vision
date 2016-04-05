@@ -69,20 +69,19 @@ var backgroundPageConnection = chrome.runtime.connect({
 });
 
 backgroundPageConnection.onMessage.addListener(function(msg) {
-  add('button');
+  add('button', 'Response with mock data');
 });
 
-function add(type) {
+function add(type, name) {
     //Create an input type dynamically.   
     var element = document.createElement("input");
     //Assign different attributes to the element. 
     element.type = type;
-    element.value = type; // Really? You want the default value to be the type string?
-    element.name = type;  // And the name too?
+    element.value = name; // Really? You want the default value to be the type string?
     element.onclick = function() { // Note this is a function
       var command = `
       window.requests[0].respond(200, { "Content-Type": "application/json" },
-                                 '[{ "id": 12, "comment": "Hey there" }]');
+                                 '{ "id": 12, "comment": "Hey there", "token": "123"}');
       `;
 
       chrome.devtools.inspectedWindow.eval(
