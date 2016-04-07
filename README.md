@@ -1,6 +1,6 @@
 # Forecast
 
-![MacDown logo](./)
+![MacDown logo](./demo.gif)
 
 ####Hi there, I'm Forecast, the Chrome extension that helps you to mock the XHR request on the fly.
 Disclaim: The logo above is not mine
