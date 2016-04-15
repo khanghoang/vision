@@ -10,7 +10,6 @@ var app = 'app/index.js';
 gulp.task('default', function() {
   return gulp.src(app)
   .pipe(webpack(webpackConfig))
-  // .pipe($.size({ title : 'js' }))
 });
 
 
