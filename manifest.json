@@ -8,6 +8,8 @@
       "background.js"
     ]
   },
+  "options_page": "./app/index.html",
+  "content_security_policy": "script-src 'self' 'blob' 'filesystem'; object-src 'self'; style-src * 'unsafe-inline'; img-src 'self' data:;",
   "permissions": [
     "tabs", 
     "http://*/*",
