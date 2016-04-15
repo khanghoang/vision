@@ -5,11 +5,19 @@ var $ = require('gulp-load-plugins')();
 var webpack = require('webpack-stream');
 var webpackConfig = require('./webpack.config.js');
 
-var app = 'app/index.js';
+var app = 'app/';
+var entry = app + 'index.js';
 
-gulp.task('default', function() {
-  return gulp.src(app)
+gulp.task('build-dev', function() {
+  return gulp.src(entry)
   .pipe(webpack(webpackConfig))
+  .pipe(gulp.dest('./dist'))
 });
+
+gulp.task('watch', function() {
+  gulp.watch('./app/**/*', ['build-dev']);
+});
+
+gulp.task('default', ['build-dev', 'watch'])
 
 
