@@ -5,7 +5,7 @@
   "devtools_page": "devtools.html",
   "background": {
     "scripts": [
-      "background.js"
+      "dist/background.js"
     ]
   },
   "options_page": "./dist/index.html",
