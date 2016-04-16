@@ -1,5 +1,5 @@
 {
-  "name": "Forecast",
+  "name": "The Vision",
   "version": "0.1",
   "description": "Mock requests on the fly",
   "devtools_page": "devtools.html",
@@ -8,8 +8,8 @@
       "background.js"
     ]
   },
-  "options_page": "./app/index.html",
-  "content_security_policy": "script-src 'self' 'blob' 'filesystem'; object-src 'self'; style-src * 'unsafe-inline'; img-src 'self' data:;",
+  "options_page": "./dist/index.html",
+  "content_security_policy": "script-src 'self'; object-src 'self'; style-src * 'unsafe-inline'; img-src 'self' data:;",
   "permissions": [
     "tabs", 
     "http://*/*",

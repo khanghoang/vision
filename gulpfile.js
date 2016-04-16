@@ -6,10 +6,12 @@ var webpack = require('webpack-stream');
 var webpackConfig = require('./webpack.config.js');
 
 var app = 'app/';
-var entry = app + 'index.js';
+var devtoolsPanel = app + 'index.js';
 
 gulp.task('build-dev', function() {
-  return gulp.src(entry)
+  return gulp.src([
+    devtoolsPanel
+  ])
   .pipe(webpack(webpackConfig))
   .pipe(gulp.dest('./dist'))
 });

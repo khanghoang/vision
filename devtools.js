@@ -3,4 +3,4 @@
 // chrome.extension.*
 
 // Create a tab in the devtools area
-chrome.devtools.panels.create("Forecast", "toast.png", "app/index.html", function(panel) {});
+chrome.devtools.panels.create("Vision", "toast.png", "dist/index.html", function(panel) {});
