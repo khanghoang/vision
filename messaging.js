@@ -28,3 +28,7 @@ function sendObjectToInspectedPage(message) {
     message.tabId = chrome.devtools.inspectedWindow.tabId;
     chrome.extension.sendMessage(message);
 }
+
+export {
+  sendObjectToInspectedPage
+};

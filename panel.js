@@ -11,7 +11,6 @@ document.querySelector('#executescript').addEventListener('click', function() {
 document.querySelector('#enableXHR').addEventListener('click', function() {
 
   var id = chrome.runtime.id;
-  sendObjectToInspectedPage({action: "script", content: "bar.js"});
 
   var command = `
   // Object.observe(window.requests, function() {

@@ -19,7 +19,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["foo.js"],
+      "js": ["injected-sinon.js"],
       "run_at": "document_end",
       "all_frames": true
     }
