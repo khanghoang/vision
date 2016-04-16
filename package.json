@@ -4,7 +4,7 @@
   "description": "The vision",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --hot --inline",
+    "start": "gulp",
     "test": "mocha --compilers js:babel-register --require test/utils/env.js test/* -w"
   },
   "author": "hoangtrieukhang@gmail.com",

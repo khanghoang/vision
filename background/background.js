@@ -5,8 +5,6 @@
 // chrome.tabs.*
 // chrome.extension.*
 
-import Bar from '../bar';
-
 chrome.extension.onConnect.addListener(function (port) {
 
   var extensionListener = function (message, sender, sendResponse) {
