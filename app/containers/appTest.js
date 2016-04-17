@@ -31,6 +31,10 @@ class App extends Component {
       this.xhr.onCreate = function (xhr) {\
         requests.push(xhr);
         window.postMessage({hello: JSON.stringify(requests)}, '*');
+        setTimeout(_ => {
+          xhr.respond(200, { "Content-Type": "application/json" },
+                      '{ "id": 12, "comment": "Hey there", "token": "123"}');
+        });
       };
     `;
 
