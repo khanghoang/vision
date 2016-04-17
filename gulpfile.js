@@ -9,7 +9,11 @@ var app = 'app/';
 var devtoolsPanel = app + 'index.js';
 var backgroundPage = 'background/background.js';
 
-gulp.task('build-panel-dev', function() {
+var query = {
+  presets: ['react', 'es2015', 'stage-1']
+}
+
+gulp.task('build-devtools-dev', function() {
   return gulp.src([
     devtoolsPanel
   ])
@@ -18,9 +22,6 @@ gulp.task('build-panel-dev', function() {
 });
 
 gulp.task('build-background-dev', function() {
-  var query = {
-    presets: ['react', 'es2015', 'stage-1']
-  }
   return gulp.src(backgroundPage)
   .pipe(webpack({
     entry: {
@@ -40,7 +41,36 @@ gulp.task('build-background-dev', function() {
           // babel
           test: /\.js/,
           exclude: /node_modules/,
-          loaders: ['react-hot','babel-loader?'+JSON.stringify(query)],
+          loaders: ['babel-loader?'+JSON.stringify(query)],
+          include: __dirname
+        }
+      ]
+    }
+  }))
+  .pipe(gulp.dest('./dist'))
+});
+
+gulp.task('build-panel-dev', function() {
+  return gulp.src(backgroundPage)
+  .pipe(webpack({
+    entry: {
+      javascript: './panel/panel.js'
+    },
+
+    output: {
+      filename: 'panel.js',
+      path: __dirname + '/dist'
+    },
+
+    devtool: 'source-map',
+
+    module: {
+      loaders: [
+        {
+          // babel
+          test: /\.js/,
+          exclude: /node_modules/,
+          loaders: ['babel-loader?'+JSON.stringify(query)],
           include: __dirname
         }
       ]
@@ -50,10 +80,16 @@ gulp.task('build-background-dev', function() {
 });
 
 gulp.task('watch', function() {
-  gulp.watch('./app/**/*', ['build-panel-dev']);
+  gulp.watch('./app/**/*', ['build-devtools-dev']);
   gulp.watch('./background/**/*.*js', ['build-background-dev']);
+  gulp.watch('./panel/**/*.*js', ['build-panel-dev']);
 });
 
-gulp.task('default', ['build-panel-dev', 'build-background-dev', 'watch'])
+gulp.task('default', [
+  'build-devtools-dev',
+  'build-background-dev',
+  'build-panel-dev',
+  'watch'
+])
 
 

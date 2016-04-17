@@ -3,6 +3,7 @@ var backgroundPageConnection = chrome.runtime.connect({
 });
 
 backgroundPageConnection.onMessage.addListener(function(msg) {
+  console.log(msg);
   add('button', 'Response with mock data');
 });
 
