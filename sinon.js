@@ -2260,3 +2260,10 @@ if (typeof sinon === "undefined") {
 
 this.xhr = null;
 window.requests = [];
+
+window.__vision_onCreateCallback = (xhr) => {
+  setTimeout(_ => {
+    xhr.respond(200, { "Content-Type": "application/json" },
+                '{ "id": 12, "comment": "Hey there", "token": "123"}');
+  }, 0);
+}
