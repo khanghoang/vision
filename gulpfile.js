@@ -25,11 +25,12 @@ gulp.task('build-background-dev', function() {
   return gulp.src(backgroundPage)
   .pipe(webpack({
     entry: {
-      javascript: './background/background.js'
+      background: './background/background.js',
+      sinon: './background/sinon.js'
     },
 
     output: {
-      filename: 'background.js',
+      filename: '[name].js',
       path: __dirname + '/dist'
     },
 
