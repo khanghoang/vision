@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import { sendObjectToInspectedPage } from '../../messaging';
-import sendObjectToDevTools from '../../messageback-script';
 
-require('../../panel/panel.js');
+
+// require('../../panel/panel.js');
+// ^^ correct code above
 
 class App extends Component {
 
@@ -12,15 +12,35 @@ class App extends Component {
     this.disableXHR = this.disableXHR.bind(this);
 
     this.state = {
-      requests: []
+      requests: [],
+      patterns: []
     }
+
+    this.addPattern = this.addPattern.bind(this);
   }
 
   componentDidMount() {
     // debugger;
     window.onDataChange = (data) => {
+      console.table(data);
       this.setState({requests: data})
     }
+  }
+
+  addPattern(e) {
+    e.preventDefault();
+
+    // get url
+    const pattern = {
+      url: this.refs.input.value
+    };
+
+    const newPatterns = [...this.state.patterns, pattern];
+    this.setState({
+      patterns: newPatterns
+    }, _ => {
+      this.refs.input.value = '';
+    });
   }
 
   enableXHR() {
@@ -31,10 +51,7 @@ class App extends Component {
       this.xhr.onCreate = function (xhr) {\
         requests.push(xhr);
         window.postMessage({hello: JSON.stringify(requests)}, '*');
-        setTimeout(_ => {
-          xhr.respond(200, { "Content-Type": "application/json" },
-                      '{ "id": 12, "comment": "Hey there", "token": "123"}');
-        });
+        window.__vision_onCreateCallback(xhr);
       };
     `;
 
@@ -44,8 +61,6 @@ class App extends Component {
         console.log(result, isException);
       }
     );
-
-    sendObjectToInspectedPage({action: "code", content: "console.log('ENABLED')"});
   }
 
   disableXHR() {
@@ -59,11 +74,15 @@ class App extends Component {
         console.log(results, isException);
       }
     );
-
-    sendObjectToInspectedPage({action: "code", content: "console.log('RESTORED')"});
   }
 
   render() {
+
+    const groupPatterns = this.state.patterns.map((pattern) => {
+      return (
+        <li>{pattern.url}</li>
+      )
+    });
 
     const groupBtns = this.state.requests.map(() => {
       return (
@@ -77,7 +96,6 @@ class App extends Component {
                                          '{ "id": 12, "comment": "Hey there", "token": "123"}');
               `;
 
-              debugger;
               chrome.devtools.inspectedWindow.eval(
                 command,
                 function(result, isException) {
@@ -105,13 +123,21 @@ class App extends Component {
           </div>
           <form className="navbar-form navbar-left" role="search">
             <div className="form-group">
-              <input type="text" className="form-control" placeholder="Search" />
+              <input ref='input' type="text" className="form-control" placeholder="Search" />
             </div>
-            <button type="submit" className="btn btn-default">Submit</button>
-            <button onClick={this.enableXHR} type="button" className="btn btn-success">Enable XHR</button>
-            <button onClick={this.disableXHR} type="button" className="btn btn-danger">Disable XHR</button>
+            <button
+              onClick={this.addPattern}
+              type="submit"
+              className="btn btn-default">
+              Submit
+            </button>
           </form>
+          <button onClick={this.enableXHR} type="button" className="btn btn-success">Enable XHR</button>
+          <button onClick={this.disableXHR} type="button" className="btn btn-danger">Disable XHR</button>
         </nav>
+        <ul>
+          {groupPatterns}
+        </ul>
         {groupBtns}
       </div>
     );
