@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Redux async example</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <button id="executescript" style="display: none;">Execute script in inspected page</button>
+    <button id="insertscript" style="display: none;">Insert script into inspected page</button>
+    <button id="insertmessagebutton" style="display: none;">Insert button to send a message from page to devtools</button>
+    <button id="enableXHR">Enable XHR</button>
+    <button id="disableXHR">Disable XHR</button>
+    <div id="root">
+    </div>
+    <script src="./dist/bundle.js"></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> -->
+    <script src="../messaging.js"></script>
+    <script src="../panel.js"></script>
+    <!-- <script> -->
+    <!--   $(function() { -->
+    <!--     $(".add&#45;destination").prop("disabled", true) -->
+    <!--     $(".geosuggest__input").bind("change paste keyup", function(e) { -->
+    <!--       var value = e.currentTarget.value; -->
+    <!--       if(value.trim() === "") { -->
+    <!--         $(".add&#45;destination").prop("disabled", true) -->
+    <!--       } else { -->
+    <!--         $(".add&#45;destination").prop("disabled", false) -->
+    <!--       } -->
+    <!--     }) -->
+    <!--   }); -->
+    <!-- </script> -->
+  </body>
+</html>
