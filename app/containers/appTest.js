@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-
+import CreatePatternForm from '../components/CreatePatternForm';
 
 // require('../../panel/panel.js');
 // ^^ correct code above
@@ -17,6 +17,7 @@ class App extends Component {
     }
 
     this.addPattern = this.addPattern.bind(this);
+    this.onCreateRequest = this.onCreateRequest.bind(this);
   }
 
   componentDidMount() {
@@ -25,6 +26,23 @@ class App extends Component {
       console.table(data);
       this.setState({requests: data})
     }
+  }
+
+  onCreateRequest(data) {
+    const dataString = JSON.stringify(data);
+    var command = `
+      let pattern = JSON.parse('${dataString}');
+      window.patterns.push(pattern);
+    `;
+
+    debugger;
+
+    chrome.devtools.inspectedWindow.eval(
+      command,
+      function(result, isException) {
+        console.log(result, isException);
+      }
+    );
   }
 
   addPattern(e) {
@@ -141,6 +159,9 @@ class App extends Component {
           {groupPatterns}
         </ul>
         {groupBtns}
+        <CreatePatternForm
+          onSubmit={this.onCreateRequest}
+        />
       </div>
     );
   }
