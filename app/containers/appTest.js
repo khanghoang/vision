@@ -51,7 +51,9 @@ class App extends Component {
       this.xhr.onCreate = function (xhr) {\
         requests.push(xhr);
         window.postMessage({hello: JSON.stringify(requests)}, '*');
-        window.__vision_onCreateCallback(xhr);
+        setTimeout(_ => {
+          window.__vision_onCreateCallback(xhr);
+        }, 0);
       };
     `;
 
