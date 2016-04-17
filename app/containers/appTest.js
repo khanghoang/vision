@@ -46,7 +46,7 @@ class App extends Component {
 
   disableXHR() {
     var command = `
-    xhr.restore();
+      xhr.restore();
     `;
 
     chrome.devtools.inspectedWindow.eval(

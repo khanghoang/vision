@@ -32,9 +32,11 @@ chrome.extension.onConnect.addListener(function (port) {
       // This accepts messages from the inspectedPage and 
       // sends them to the panel
     } else {
-      console.log('xhr data', message.hello);
+      // The Vision data sent from injected code back
+      // to backgroun page
       port.postMessage(message);
     }
+
     sendResponse(message);
   }
 
@@ -54,9 +56,6 @@ chrome.extension.onConnect.addListener(function (port) {
 var connections = {};
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  console.log('incoming message from injected script');
-  console.log(request);
-
   // Messages from content scripts should have sender.tab set
   if (sender.tab) {
     var tabId = sender.tab.id;
