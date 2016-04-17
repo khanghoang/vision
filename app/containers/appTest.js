@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import CreatePatternForm from '../components/CreatePatternForm';
+import _ from 'lodash';
 
 // require('../../panel/panel.js');
 // ^^ correct code above
+const storage = chrome.storage.local;
 
 class App extends Component {
 
@@ -10,6 +12,7 @@ class App extends Component {
     super();
     this.enableXHR = this.enableXHR.bind(this);
     this.disableXHR = this.disableXHR.bind(this);
+    this.clearCachedPatterns = this.clearCachedPatterns.bind(this);
 
     this.state = {
       requests: [],
@@ -26,6 +29,34 @@ class App extends Component {
       console.table(data);
       this.setState({requests: data})
     }
+
+    storage.get('patterns', (store) => {
+      debugger;
+      let patterns = store.patterns || [];
+      if (patterns instanceof Error) {
+        patterns = [];
+      }
+
+      const dataString = JSON.stringify(patterns);
+      debugger;
+      var command = `
+      const patterns = JSON.parse('${dataString}');
+      debugger;
+      window.patterns = patterns;
+      `;
+      chrome.devtools.inspectedWindow.eval(
+        command,
+        function(result, isException) {
+          console.log(result, isException);
+        }
+      );
+    });
+  }
+
+  clearCachedPatterns() {
+    storage.clear(() => {
+      console.log('cleared')
+    });
   }
 
   onCreateRequest(data) {
@@ -35,12 +66,23 @@ class App extends Component {
       window.patterns.push(pattern);
     `;
 
-    debugger;
 
     chrome.devtools.inspectedWindow.eval(
       command,
       function(result, isException) {
         console.log(result, isException);
+        // if (!isException) {
+        // }
+        storage.get('patterns', (storedData) => {
+          debugger;
+          let patterns = storedData.patterns || [];
+          const newPatterns = [...patterns, data];
+          storage.set({patterns: newPatterns}, () => {
+            debugger;
+            console.log('Pattern stored');
+          });
+        });
+
       }
     );
   }
@@ -154,6 +196,7 @@ class App extends Component {
           </form>
           <button onClick={this.enableXHR} type="button" className="btn btn-success">Enable XHR</button>
           <button onClick={this.disableXHR} type="button" className="btn btn-danger">Disable XHR</button>
+          <button onClick={this.clearCachedPatterns} type="button" className="btn btn-danger">clear Cached Patterns</button>
         </nav>
         <ul>
           {groupPatterns}
