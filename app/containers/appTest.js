@@ -24,24 +24,20 @@ class App extends Component {
   }
 
   componentDidMount() {
-    // debugger;
     window.onDataChange = (data) => {
       console.table(data);
       this.setState({requests: data})
     }
 
     storage.get('patterns', (store) => {
-      debugger;
       let patterns = store.patterns || [];
       if (patterns instanceof Error) {
         patterns = [];
       }
 
       const dataString = JSON.stringify(patterns);
-      debugger;
       var command = `
       const patterns = JSON.parse('${dataString}');
-      debugger;
       window.patterns = patterns;
       `;
       chrome.devtools.inspectedWindow.eval(
@@ -71,14 +67,10 @@ class App extends Component {
       command,
       function(result, isException) {
         console.log(result, isException);
-        // if (!isException) {
-        // }
         storage.get('patterns', (storedData) => {
-          debugger;
           let patterns = storedData.patterns || [];
           const newPatterns = [...patterns, data];
           storage.set({patterns: newPatterns}, () => {
-            debugger;
             console.log('Pattern stored');
           });
         });
