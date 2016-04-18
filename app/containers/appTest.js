@@ -136,11 +136,54 @@ class App extends Component {
     );
   }
 
+  updatePatternsInLocalStorage(patterns, cb) {
+    storage.set({patterns: patterns}, () => {
+      cb(patterns);
+    });
+  }
+
+  updatePatternsOnContentPageWithPatterns(patterns, cb) {
+    const dataString = JSON.stringify(patterns);
+    const command = `
+    let patterns = JSON.parse('${dataString}');
+    window.patterns = patterns;
+    `;
+
+    const that = this;
+
+    chrome.devtools.inspectedWindow.eval(
+      command,
+      cb
+    );
+  }
+
+  onDeletePattern(patternID) {
+    debugger;
+    const patterns = _.filter(this.state.patterns, (p) => {
+      return p._id !== patternID;
+    });
+
+    this.setState({patterns: patterns}, () => {
+      const updateFunc = this.updatePatternsOnContentPageWithPatterns;
+      updateFunc(patterns,
+                 (result, isException) => {
+                   this.updatePatternsInLocalStorage(patterns);
+                 }
+                );
+    });
+
+  }
+
   render() {
 
     const groupPatterns = this.state.patterns.map((pattern) => {
       return (
-        <li>{pattern.url}</li>
+        <li>{pattern.url}
+        <button onClick={(e) => {
+          e.preventDefault();
+          this.onDeletePattern(pattern._id);
+        }}>Delete</button>
+        </li>
       )
     });
 
