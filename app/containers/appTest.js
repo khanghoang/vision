@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import CreatePatternForm from '../components/CreatePatternForm';
+import genID from '../helpers/makeID';
 import _ from 'lodash';
 
 // require('../../panel/panel.js');
@@ -35,6 +36,8 @@ class App extends Component {
         patterns = [];
       }
 
+      this.setState({patterns: patterns});
+
       const dataString = JSON.stringify(patterns);
       var command = `
       const patterns = JSON.parse('${dataString}');
@@ -56,22 +59,25 @@ class App extends Component {
   }
 
   onCreateRequest(data) {
-    const dataString = JSON.stringify(data);
+    const pattern = _.assign({}, data, {_id: genID()});
+    const dataString = JSON.stringify(pattern);
     var command = `
       let pattern = JSON.parse('${dataString}');
       window.patterns.push(pattern);
     `;
 
+    const that = this;
 
     chrome.devtools.inspectedWindow.eval(
       command,
-      function(result, isException) {
+      (result, isException) => {
         console.log(result, isException);
         storage.get('patterns', (storedData) => {
           let patterns = storedData.patterns || [];
-          const newPatterns = [...patterns, data];
+          const newPatterns = [...patterns, pattern];
           storage.set({patterns: newPatterns}, () => {
             console.log('Pattern stored');
+            that.setState({patterns: newPatterns});
           });
         });
 
