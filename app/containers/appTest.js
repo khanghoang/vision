@@ -2,9 +2,10 @@ import React, {Component} from 'react';
 import CreatePatternForm from '../components/CreatePatternForm';
 import genID from '../helpers/makeID';
 import _ from 'lodash';
+import CodeEditorComponent from '../components/CodeEditorComponent';
 
-// require('../../panel/panel.js');
-// ^^ correct code above
+require('../../panel/panel.js');
+// ^^ correct code aboveroot
 const storage = chrome.storage.local;
 
 class App extends Component {
@@ -115,6 +116,25 @@ class App extends Component {
       };
     `;
 
+
+    // var root;
+    // if (typeof window !== 'undefined') { // Browser window
+    //   root = window;
+    // } else if (typeof self !== 'undefined') { // Web Worker
+    //   root = self;
+    // } else { // Other environments
+    //   root = this;
+    // }
+    // window.XMLHttpRequest = sinon.useFakeXMLHttpRequest();\
+    //   debugger;
+    // window.XMLHttpRequest.onCreate = function (xhr) {\
+    //   requests.push(xhr);
+    // window.postMessage({hello: JSON.stringify(requests)}, '*');
+    // setTimeout(_ => {
+    //   window.__vision_onCreateCallback(xhr);
+    // }, 0);
+    // };
+
     chrome.devtools.inspectedWindow.eval(
       command,
       function(result, isException) {
@@ -158,7 +178,7 @@ class App extends Component {
   }
 
   onDeletePattern(patternID) {
-    debugger;
+    // debugger;
     const patterns = _.filter(this.state.patterns, (p) => {
       return p._id !== patternID;
     });
@@ -246,6 +266,7 @@ class App extends Component {
         <CreatePatternForm
           onSubmit={this.onCreateRequest}
         />
+        <CodeEditorComponent />
       </div>
     );
   }
