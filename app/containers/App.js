@@ -14,10 +14,6 @@ class App extends Component {
 
   constructor() {
     super();
-    this.enableXHR = this.enableXHR.bind(this);
-    this.disableXHR = this.disableXHR.bind(this);
-    this.clearCachedPatterns = this.clearCachedPatterns.bind(this);
-    this.onToggle = this.onToggle.bind(this);
 
     this.state = {
       endableXHR: false,
@@ -57,7 +53,7 @@ class App extends Component {
     });
   }
 
-  clearCachedPatterns() {
+  clearCachedPatterns = () => {
     storage.clear(() => {
       console.log('cleared')
     });
@@ -106,7 +102,7 @@ class App extends Component {
     });
   }
 
-  enableXHR() {
+  enableXHR = () => {
     var id = chrome.runtime.id;
 
     var command = `
@@ -128,7 +124,7 @@ class App extends Component {
     );
   }
 
-  disableXHR() {
+  disableXHR = () => {
     var command = `
       xhr.restore();
     `;
@@ -136,7 +132,7 @@ class App extends Component {
     chrome.devtools.inspectedWindow.eval(
       command,
       function(result, isException) {
-        console.log(results, isException);
+        console.log(result, isException);
       }
     );
   }
