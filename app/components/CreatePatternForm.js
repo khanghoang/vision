@@ -58,7 +58,7 @@ class CreatePatternForm extends Component {
   }
 
   onSubmit(e) {
-    e.preventDefault();
+    e && e.preventDefault();
     this.props.onSubmit && this.props.onSubmit(this.state);
   }
 
@@ -67,33 +67,63 @@ class CreatePatternForm extends Component {
     const self = this;
 
     function _onChange(name) {
-      return function() {
+      return function(value) {
         const args = arguments;
-        const newArgs = [name, args[1]];
+        let finalValue;
+        if (name === 'text' || name === 'codeEditor') {
+          finalValue = arguments[0];
+        } else {
+          finalValue = arguments[1];
+        }
+
+        const newArgs = [name, finalValue];
         self.onValueChange(...newArgs);
       }
     }
 
     return (
       <form>
-        <TextField
-          id="text-field-controlled"
-          hintText="HTTP Method (ex: POST, GET...)"
-          onChange={_onChange('method')}
-          name='method'
-          ref='method'
-          key='method'
-          fullWidth={true}
-        />
-        <TextField
-          id="text-field-controlled"
-          hintText="URL (ex: https://google.com/abc)"
-          onChange={_onChange('url')}
-          name='url'
-          ref='url'
-          key='url'
-          fullWidth={true}
-        />
+        {!this.props.compad ?
+          (
+            <div>
+              <TextField
+                id="text-field-controlled"
+                hintText="HTTP Method (ex: POST, GET...)"
+                onChange={_onChange('method')}
+                name='method'
+                ref='method'
+                key='method'
+                fullWidth={true}
+                />
+                <TextField
+                  id="text-field-controlled"
+                  hintText="URL (ex: https://google.com/abc)"
+                  onChange={_onChange('url')}
+                  name='url'
+                  ref='url'
+                  key='url'
+                  fullWidth={true}
+                  />
+                  <TextField
+                    id="text-field-controlled"
+                    hintText="Custom header"
+                    onChange={_onChange('headers')}
+                    name='headers'
+                    ref='headers'
+                    key='headers'
+                    fullWidth={true}
+                    />
+                    <Toggle
+                      label="Ignore parameters"
+                      labelPosition="right"
+                      type="checkbox"
+                      ref="checkbox"
+                      name='checkbox'
+                      key='checkbox'
+                      onToggle={this.onCheckBoxChange}
+                      />
+                    </div>
+        ) : null}
         <TextField
           id="text-field-controlled"
           hintText="HTTP status code (ex: 200, 401, 500...)"
@@ -103,24 +133,6 @@ class CreatePatternForm extends Component {
           key='status'
           fullWidth={true}
         />
-        <TextField
-          id="text-field-controlled"
-          hintText="Custom header"
-          onChange={_onChange('headers')}
-          name='headers'
-          ref='headers'
-          key='headers'
-          fullWidth={true}
-        />
-        <Toggle
-          label="Ignore parameters"
-          labelPosition="right"
-          type="checkbox"
-          ref="checkbox"
-          name='checkbox'
-          key='checkbox'
-          onToggle={this.onCheckBoxChange}
-          />
         <CodeEditorComponent
           onChange={_onChange('text')}
           name='text'

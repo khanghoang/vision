@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import brace from 'brace';
 import AceEditor from 'react-ace';
+import makeID from '../helpers/makeID';
 
 import 'brace/mode/java';
 import 'brace/theme/github';
@@ -27,9 +28,9 @@ class CodeEditorComponent extends Component {
         theme="github"
         onChange={this.onChange}
         value={this.state.value}
-        name="codeEditor"
+        name={`codeEditor+${makeID()}`}
         editorProps={{$blockScrolling: true}}
-        height="250px"
+        height="200px"
         width="100%"
         />
     )

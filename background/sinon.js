@@ -53,6 +53,20 @@ window.__returnOriginResultWithRequestID = function(id) {
   request.send();
 }
 
+window.__returnMockResultWithRequestID = function(id, status, headerStr, responseStr) {
+  var i = 0;
+  var request;
+  if (!window.requests) return;
+  for( i = 0; i < window.requests.length; i ++) {
+    var q = window.requests[i];
+    if (q._id === id) {
+      request = q;
+    }
+  }
+
+  request && request.respond(status, headerStr, JSON.stringify(responseStr));
+}
+
 window.__vision_onCreateCallback = (xhr) => {
   patterns.forEach((p) => {
     if(compareXHRWithPatterns(xhr, p)) {

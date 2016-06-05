@@ -6,6 +6,10 @@ import CodeEditorComponent from '../components/CodeEditorComponent';
 import AppBar from 'material-ui/AppBar';
 import Toggle from 'material-ui/Toggle';
 
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
+
 require('../../panel/panel.js');
 // ^^ correct code aboveroot
 const storage = chrome.storage.local;
@@ -18,9 +22,22 @@ class App extends Component {
     this.state = {
       endableXHR: false,
       requests: [],
-      patterns: []
+      patterns: [],
+      open: false,
+      currentRequest: null
     }
+
+    this.handleOpen = this.handleOpen.bind(this);
+    this.handleClose = this.handleClose.bind(this);
   }
+
+  handleOpen() {
+    this.setState({open: true});
+  };
+
+  handleClose() {
+    this.setState({open: false});
+  };
 
   componentDidMount() {
     window.onDataChange = (data) => {
@@ -185,7 +202,61 @@ class App extends Component {
 
   }
 
+  forwardRequest = () => {
+    // command to trigger to response the request
+    const command = `
+    console.log('click button');
+    window.__returnOriginResultWithRequestID('${this.state.currentRequest._id}')
+    `;
+
+    chrome.devtools.inspectedWindow.eval(
+      command,
+      function(result, isException) {
+        console.log(result, isException);
+      }
+    );
+    this.handleClose();
+  }
+
+  responseWithMockData = (data) => {
+    // move the break line
+    const responseText = JSON.stringify(JSON.parse(data.response.text))
+    const command = `
+    window.__returnMockResultWithRequestID('${this.state.currentRequest._id}', '${data.status}', { "Content-Type": "application/json" },
+                               '${responseText}');
+                               `;
+
+                               chrome.devtools.inspectedWindow.eval(
+                                 command,
+                                 function(result, isException) {
+                                   console.log(result, isException);
+                                 }
+                               );
+    this.handleClose();
+  }
+
   render() {
+
+    const actions = [
+      <FlatButton
+        label="Cancel"
+        primary={true}
+        onClick={this.handleClose}
+      />,
+      <FlatButton
+        label="Return mock object"
+        primary={true}
+        onClick={() => {
+          this.refs.mockForm.onSubmit();
+          this.handleClose()
+        }}
+      />,
+      <FlatButton
+        label="Forward"
+        primary={true}
+        onClick={this.forwardRequest}
+      />,
+    ];
 
     const groupPatterns = this.state.patterns.map((pattern) => {
       return (
@@ -202,22 +273,10 @@ class App extends Component {
       const id = q._id;
       return (
         <button
-          onClick={
-            () => {
-              // command to trigger to response the request
-              const command = `
-                console.log('click button');
-                window.__returnOriginResultWithRequestID('${id}')
-              `;
-
-              chrome.devtools.inspectedWindow.eval(
-                command,
-                function(result, isException) {
-                  console.log(result, isException);
-                }
-              );
-            }
-          }
+          onClick={() => {
+            this.setState({currentRequest: q});
+            this.handleOpen();
+          }}
           type="button"
           className="btn btn-success">
           {`Release the request ${id}`}
@@ -257,6 +316,19 @@ class App extends Component {
               onSubmit={this.onCreateRequest}
               />
         </div>
+        <RaisedButton label="Modal Dialog" onClick={this.handleOpen} />
+        <Dialog
+          title="Response with data"
+          actions={actions}
+          modal={true}
+          open={this.state.open}
+        >
+          <CreatePatternForm
+            ref='mockForm'
+            compad={true}
+            onSubmit={this.responseWithMockData}
+            />
+        </Dialog>
       </div>
     );
   }
