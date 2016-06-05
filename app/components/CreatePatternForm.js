@@ -2,6 +2,13 @@ import React, { Component } from 'react';
 import Field from '../containers/Field';
 import _ from 'lodash';
 import TextField from 'material-ui/TextField';
+import Toggle from 'material-ui/Toggle';
+import RaisedButton from 'material-ui/RaisedButton';
+import CodeEditorComponent from '../components/CodeEditorComponent';
+
+const style = {
+  margin: 12,
+};
 
 class CreatePatternForm extends Component {
   constructor() {
@@ -14,7 +21,8 @@ class CreatePatternForm extends Component {
       method: '',
       url: '',
       response: {},
-      ignoreParameters: false
+      ignoreParameters: false,
+      status: ''
     }
   }
 
@@ -29,32 +37,17 @@ class CreatePatternForm extends Component {
         this.setState({url: value})
         break;
       case 'status': {
-        const newResponse = _.assign({}, this.state.response, {status: value});
-        this.setState({response: newResponse})
+        this.setState({status: value})
         break;
       }
-      case 'text': {
-        let response = {};
-        try {
-          response = JSON.parse(value);
-        } catch (e) {
-          console.warn('Error when parsing response');
-        }
-
-        const newResponse = _.assign({}, this.state.response, {text: response});
+      case 'text':
+      case 'codeEditor': {
+        const newResponse = _.assign({}, this.state.response, {text: value});
         this.setState({response: newResponse})
         break;
       }
       case 'headers': {
-        let headers = {};
-        try {
-          headers = JSON.parse(value);
-        } catch (e) {
-          console.warn('Error when parsing response');
-        }
-
-        const newResponse = _.assign({}, this.state.response, {headers: headers});
-        this.setState({response: newResponse})
+        this.setState({headers: value})
         break;
       }
     }
@@ -70,12 +63,23 @@ class CreatePatternForm extends Component {
   }
 
   render() {
+
+    const self = this;
+
+    function _onChange(name) {
+      return function() {
+        const args = arguments;
+        const newArgs = [name, args[1]];
+        self.onValueChange(...newArgs);
+      }
+    }
+
     return (
       <form>
         <TextField
           id="text-field-controlled"
           hintText="HTTP Method (ex: POST, GET...)"
-          onChange={this.onValueChange}
+          onChange={_onChange('method')}
           name='method'
           ref='method'
           key='method'
@@ -84,7 +88,7 @@ class CreatePatternForm extends Component {
         <TextField
           id="text-field-controlled"
           hintText="URL (ex: https://google.com/abc)"
-          onValueChange={this.onValueChange}
+          onChange={_onChange('url')}
           name='url'
           ref='url'
           key='url'
@@ -93,7 +97,7 @@ class CreatePatternForm extends Component {
         <TextField
           id="text-field-controlled"
           hintText="HTTP status code (ex: 200, 401, 500...)"
-          onValueChange={this.onValueChange}
+          onChange={_onChange('status')}
           name='status'
           ref='status'
           key='status'
@@ -102,33 +106,33 @@ class CreatePatternForm extends Component {
         <TextField
           id="text-field-controlled"
           hintText="Custom header"
-          onValueChange={this.onValueChange}
+          onChange={_onChange('headers')}
           name='headers'
           ref='headers'
           key='headers'
           fullWidth={true}
         />
-        <label>
-          <input
-            onChange={this.onCheckBoxChange}
-            type="checkbox"
-            ref="checkbox"
-            name='checkbox'
-            key='checkbox'
+        <Toggle
+          label="Ignore parameters"
+          labelPosition="right"
+          type="checkbox"
+          ref="checkbox"
+          name='checkbox'
+          key='checkbox'
+          onToggle={this.onCheckBoxChange}
           />
-            Ignore Paramters
-          </label>
-        <Field
-          inputType='textarea'
-          onValueChange={this.onValueChange}
+        <CodeEditorComponent
+          onChange={_onChange('text')}
           name='text'
           ref='text'
           key='text'
-        />
-        <button
-          type='submit'
+          />
+        <RaisedButton
+          label="Create request"
+          primary={true}
           onClick={this.onSubmit}
-          >Create request</button>
+          style={style}
+          />
         </form>
     )
   }

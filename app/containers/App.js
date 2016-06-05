@@ -5,6 +5,7 @@ import _ from 'lodash';
 import CodeEditorComponent from '../components/CodeEditorComponent';
 import AppBar from 'material-ui/AppBar';
 import Toggle from 'material-ui/Toggle';
+import Drawer from '../components/Drawer';
 
 require('../../panel/panel.js');
 // ^^ correct code aboveroot
@@ -64,6 +65,7 @@ class App extends Component {
   }
 
   onCreateRequest(data) {
+    debugger;
     const pattern = _.assign({}, data, {_id: genID()});
     const dataString = JSON.stringify(pattern);
     var command = `
@@ -162,7 +164,7 @@ class App extends Component {
     );
   }
 
-  onToggle() {
+  onToggle = () => {
     const isEnabled = !this.state.enableXHR;
     if (isEnabled) {
       this.enableXHR();
@@ -255,17 +257,6 @@ class App extends Component {
           }
           />
         <div style={{"margin": "24px;"}} >
-          <form className="navbar-form navbar-left" role="search">
-            <div className="form-group">
-              <input ref='input' type="text" className="form-control" placeholder="Search" />
-            </div>
-            <button
-              onClick={this.addPattern}
-              type="submit"
-              className="btn btn-default">
-              Submit
-            </button>
-          </form>
           <button onClick={this.clearCachedPatterns} type="button" className="btn btn-danger">clear Cached Patterns</button>
           <ul>
             {groupPatterns}
@@ -274,7 +265,6 @@ class App extends Component {
             <CreatePatternForm
               onSubmit={this.onCreateRequest}
               />
-              <CodeEditorComponent />
         </div>
       </div>
     );
