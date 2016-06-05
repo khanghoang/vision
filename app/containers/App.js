@@ -1,191 +1,288 @@
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
-import { fetchTravellers, callPatchDestinations, logout } from '../actions';
-import UserDestinationPanel from '../components/UserDestinationPanel';
-import {Button} from 'react-bootstrap';
-import {cookie} from '../helpers/utils';
-import AutoCompleteCountry from '../components/AutoCompleteCountry';
+import React, {Component} from 'react';
+import CreatePatternForm from '../components/CreatePatternForm';
+import genID from '../helpers/makeID';
+import _ from 'lodash';
+import CodeEditorComponent from '../components/CodeEditorComponent';
+import AppBar from 'material-ui/AppBar';
+import Toggle from 'material-ui/Toggle';
 
-require("!style!css!less!./App.less");
+require('../../panel/panel.js');
+// ^^ correct code aboveroot
+const storage = chrome.storage.local;
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-  }
 
-  logout() {
-    this.props.dispatch(logout())
-  }
+  constructor() {
+    super();
+    this.enableXHR = this.enableXHR.bind(this);
+    this.disableXHR = this.disableXHR.bind(this);
+    this.clearCachedPatterns = this.clearCachedPatterns.bind(this);
 
-  retrictUser(props) {
-    const { currentUser } = props;
-    // haven't login yet
-    if(!currentUser.token) {
-      this.context.router.transitionTo("Login");
+    this.state = {
+      requests: [],
+      patterns: []
     }
+
+    this.addPattern = this.addPattern.bind(this);
+    this.onCreateRequest = this.onCreateRequest.bind(this);
   }
 
   componentDidMount() {
-    const { currentUser, dispatch } = this.props;
-    this.retrictUser(this.props);
-    this.refreshTravelers();
-  }
+    window.onDataChange = (data) => {
+      console.table(data);
+      this.setState({requests: data})
+    }
 
-  refreshTravelers() {
-    const { currentUser, dispatch } = this.props;
-    dispatch(fetchTravellers(currentUser.token));
-  }
+    storage.get('patterns', (store) => {
+      let patterns = store.patterns || [];
+      if (patterns instanceof Error) {
+        patterns = [];
+      }
 
-  componentWillReceiveProps(nextProps) {
-    this.retrictUser(nextProps);
-  }
+      this.setState({patterns: patterns});
 
-  onCheckVisited() {
-    var self = this;
-    const {currentUser, travelers, dispatch} = self.props;
-    return function(destinationID) {
-      const id = currentUser.id;
-      const token = currentUser.token;
-      let destinations = _.chain(travelers.data)
-      .filter(function(user) {
-        return user.id === id
-      })
-      .first()
-      .value().destinations;
-      destinations = _.chain(destinations)
-      .map(function(des) {
-        if(des._id === destinationID){
-          des.visited = !des.visited;
+      const dataString = JSON.stringify(patterns);
+      var command = `
+      const patterns = JSON.parse('${dataString}');
+      window.patterns = patterns;
+      `;
+      chrome.devtools.inspectedWindow.eval(
+        command,
+        function(result, isException) {
+          console.log(result, isException);
         }
-
-        return des;
-      })
-      .value();
-      dispatch(callPatchDestinations(token, id, destinations));
-    }
+      );
+    });
   }
 
-  onDestinationDelete() {
-    var self = this;
-    const {currentUser, travelers, dispatch} = self.props;
-    return function(destinationID) {
-      const id = currentUser.id;
-      const token = currentUser.token;
-      let destinations = _.chain(travelers.data)
-      .filter(function(user) {
-        return user.id === id
-      })
-      .first()
-      .value().destinations;
-      destinations = _.chain(destinations)
-      .filter(function(des) {
-        return des._id !== destinationID
-      })
-      .value();
-      dispatch(callPatchDestinations(token, id, destinations));
-    }
+  clearCachedPatterns() {
+    storage.clear(() => {
+      console.log('cleared')
+    });
   }
 
-  onAddDestination() {
-    var self = this;
-    const {currentUser, travelers, dispatch} = self.props;
-    const destinationName = self.refs.destinationInput.refs.geosuggest.state.userInput;
-    const id = currentUser.id;
-    const token = currentUser.token;
-    let destinations = _.chain(travelers.data)
-    .filter(function(user) {
-      return user.id === id
-    })
-    .first()
-    .value().destinations;
-    destinations.push({name: destinationName})
-    dispatch(callPatchDestinations(token, id, destinations));
-    self.refs.destinationInput.refs.geosuggest.clear();
+  onCreateRequest(data) {
+    const pattern = _.assign({}, data, {_id: genID()});
+    const dataString = JSON.stringify(pattern);
+    var command = `
+      let pattern = JSON.parse('${dataString}');
+      window.patterns.push(pattern);
+    `;
+
+    const that = this;
+
+    chrome.devtools.inspectedWindow.eval(
+      command,
+      (result, isException) => {
+        console.log(result, isException);
+        storage.get('patterns', (storedData) => {
+          let patterns = storedData.patterns || [];
+          const newPatterns = [...patterns, pattern];
+          storage.set({patterns: newPatterns}, () => {
+            console.log('Pattern stored');
+            that.setState({patterns: newPatterns});
+          });
+        });
+
+      }
+    );
+  }
+
+  addPattern(e) {
+    e.preventDefault();
+
+    // get url
+    const pattern = {
+      url: this.refs.input.value
+    };
+
+    const newPatterns = [...this.state.patterns, pattern];
+    this.setState({
+      patterns: newPatterns
+    }, _ => {
+      this.refs.input.value = '';
+    });
+  }
+
+  enableXHR() {
+    var id = chrome.runtime.id;
+
+    var command = `
+      this.xhr = sinon.useFakeXMLHttpRequest();\
+      this.xhr.onCreate = function (xhr) {\
+        requests.push(xhr);
+        window.postMessage({hello: JSON.stringify(requests)}, '*');
+        setTimeout(_ => {
+          window.__vision_onCreateCallback(xhr);
+        }, 0);
+      };
+    `;
+
+
+    // var root;
+    // if (typeof window !== 'undefined') { // Browser window
+    //   root = window;
+    // } else if (typeof self !== 'undefined') { // Web Worker
+    //   root = self;
+    // } else { // Other environments
+    //   root = this;
+    // }
+    // window.XMLHttpRequest = sinon.useFakeXMLHttpRequest();\
+    //   debugger;
+    // window.XMLHttpRequest.onCreate = function (xhr) {\
+    //   requests.push(xhr);
+    // window.postMessage({hello: JSON.stringify(requests)}, '*');
+    // setTimeout(_ => {
+    //   window.__vision_onCreateCallback(xhr);
+    // }, 0);
+    // };
+
+    chrome.devtools.inspectedWindow.eval(
+      command,
+      function(result, isException) {
+        console.log(result, isException);
+      }
+    );
+  }
+
+  disableXHR() {
+    var command = `
+      xhr.restore();
+    `;
+
+    chrome.devtools.inspectedWindow.eval(
+      command,
+      function(result, isException) {
+        console.log(results, isException);
+      }
+    );
+  }
+
+  updatePatternsInLocalStorage(patterns, cb) {
+    storage.set({patterns: patterns}, () => {
+      cb(patterns);
+    });
+  }
+
+  updatePatternsOnContentPageWithPatterns(patterns, cb) {
+    const dataString = JSON.stringify(patterns);
+    const command = `
+    let patterns = JSON.parse('${dataString}');
+    window.patterns = patterns;
+    `;
+
+    const that = this;
+
+    chrome.devtools.inspectedWindow.eval(
+      command,
+      cb
+    );
+  }
+
+  onDeletePattern(patternID) {
+    // debugger;
+    const patterns = _.filter(this.state.patterns, (p) => {
+      return p._id !== patternID;
+    });
+
+    this.setState({patterns: patterns}, () => {
+      const updateFunc = this.updatePatternsOnContentPageWithPatterns;
+      updateFunc(patterns,
+                 (result, isException) => {
+                   this.updatePatternsInLocalStorage(patterns);
+                 }
+                );
+    });
+
   }
 
   render() {
-    const { isCallPatchingDestination, currentUser, travelers, isLoading, isError, isErrorFetchingTravelers} = this.props;
 
-    const loadingDiv = (
-      <div className={isLoading ? "" : "hide"}>
-      <h3>Loading...</h3>
-      </div>
-    )
+    const groupPatterns = this.state.patterns.map((pattern) => {
+      return (
+        <li>{pattern.url}
+        <button onClick={(e) => {
+          e.preventDefault();
+          this.onDeletePattern(pattern._id);
+        }}>Delete</button>
+        </li>
+      )
+    });
 
-    const mainDiv = (
-        <div className={isErrorFetchingTravelers || isLoading ? "hide" : ""}>
-        <UserDestinationPanel
-        destinations={travelers}
-        onCheckVisited={this.onCheckVisited()}
-        onDestinationDelete={this.onDestinationDelete()}
-        isLoading={isCallPatchingDestination}
-        currentUser={currentUser}
-        isError={isError}
-        />
-        <Button
-        disabled={isCallPatchingDestination}
-        className="add-destination"
-        ref="addbutton"
-        onClick={!isCallPatchingDestination ? this.onAddDestination.bind(this) : null}>
-        {isCallPatchingDestination ? 'Process' : 'Add'}
-        </Button>
-        <AutoCompleteCountry
-        ref="destinationInput"
-        />
-        </div>
-    )
+    const groupBtns = this.state.requests.map(() => {
+      return (
+        <button
+          onClick={
+            () => {
+              // command to trigger to response the request
+              const command = `
+                console.log('click button');
+                window.requests[0].respond(200, { "Content-Type": "application/json" },
+                                         '{ "id": 12, "comment": "Hey there", "token": "123"}');
+              `;
 
-    const errorDiv = (
-        <div className={isErrorFetchingTravelers ? "" : "hide"}>
-        There was error when loading travelers information, please
-        <Button
-        onClick={this.refreshTravelers.bind(this)}
-        >
-        Refresh
-        </Button>
-        </div>
-    )
+              chrome.devtools.inspectedWindow.eval(
+                command,
+                function(result, isException) {
+                  console.log(result, isException);
+                }
+              );
+            }
+          }
+          type="button"
+          className="btn btn-success">
+          Release the request
+        </button>
+      )
+    });
 
     return (
-      <div className="main-page">
-        <h2>Hi {currentUser.name}
-        <Button
-        onClick={this.logout.bind(this)}
-        className="logout-button"
-        >Logout</Button>
-        </h2>
-        {loadingDiv}
-        {mainDiv}
-        {errorDiv}
+      <div>
+        <AppBar
+          title="Vision"
+          children={
+            <Toggle
+              label="Enable Mock"
+              labelPosition="right"
+              style={{
+                'width': '150px',
+                'float': 'right',
+                'margin': 'auto 0'
+              }}
+              labelStyle={{
+                'color': '#fff',
+                'font-size': '12px'
+              }}
+              />
+          }
+          />
+        <div style={{"margin": "24px;"}} >
+          <form className="navbar-form navbar-left" role="search">
+            <div className="form-group">
+              <input ref='input' type="text" className="form-control" placeholder="Search" />
+            </div>
+            <button
+              onClick={this.addPattern}
+              type="submit"
+              className="btn btn-default">
+              Submit
+            </button>
+          </form>
+          <button onClick={this.enableXHR} type="button" className="btn btn-success">Enable XHR</button>
+          <button onClick={this.disableXHR} type="button" className="btn btn-danger">Disable XHR</button>
+          <button onClick={this.clearCachedPatterns} type="button" className="btn btn-danger">clear Cached Patterns</button>
+          <ul>
+            {groupPatterns}
+            </ul>
+            {groupBtns}
+            <CreatePatternForm
+              onSubmit={this.onCreateRequest}
+              />
+              <CodeEditorComponent />
+        </div>
       </div>
     );
   }
 }
 
-App.propTypes = {
-  dispatch: PropTypes.func.isRequired
-};
-
-App.contextTypes = {
-    router: React.PropTypes.func.isRequired
-};
-
-function mapStateToProps(state) {
-  let { currentUser, travelers } = state;
-  const isLoading = travelers.isLoading;
-  const isCallPatchingDestination = travelers.isCallPatchingDestination;
-  const isError = travelers.isError;
-  const isErrorFetchingTravelers = travelers.isErrorFetchingTravelers;
-  currentUser = currentUser || {};
-
-  return {
-    currentUser,
-    travelers,
-    isLoading,
-    isCallPatchingDestination,
-    isError,
-    isErrorFetchingTravelers
-  };
-}
-
-export default connect(mapStateToProps)(App);
+export default App;
