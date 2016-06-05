@@ -20,9 +20,6 @@ class App extends Component {
       requests: [],
       patterns: []
     }
-
-    this.addPattern = this.addPattern.bind(this);
-    this.onCreateRequest = this.onCreateRequest.bind(this);
   }
 
   componentDidMount() {
@@ -59,7 +56,7 @@ class App extends Component {
     });
   }
 
-  onCreateRequest(data) {
+  onCreateRequest = (data) => {
     const pattern = _.assign({}, data, {_id: genID()});
     const dataString = JSON.stringify(pattern);
     var command = `
@@ -86,7 +83,7 @@ class App extends Component {
     );
   }
 
-  addPattern(e) {
+  addPattern = (e) => {
     e.preventDefault();
 
     // get url
@@ -108,6 +105,7 @@ class App extends Component {
     var command = `
       this.xhr = sinon.useFakeXMLHttpRequest();\
       this.xhr.onCreate = function (xhr) {\
+        xhr._id = window.__makeID();
         requests.push(xhr);
         window.postMessage({hello: JSON.stringify(requests)}, '*');
         setTimeout(_ => {
@@ -200,7 +198,8 @@ class App extends Component {
       )
     });
 
-    const groupBtns = this.state.requests.map(() => {
+    const groupBtns = this.state.requests.map((q) => {
+      const id = q._id;
       return (
         <button
           onClick={
@@ -208,8 +207,7 @@ class App extends Component {
               // command to trigger to response the request
               const command = `
                 console.log('click button');
-                window.requests[0].respond(200, { "Content-Type": "application/json" },
-                                         '{ "id": 12, "comment": "Hey there", "token": "123"}');
+                window.__returnOriginResultWithRequestID('${id}')
               `;
 
               chrome.devtools.inspectedWindow.eval(
@@ -222,7 +220,7 @@ class App extends Component {
           }
           type="button"
           className="btn btn-success">
-          Release the request
+          {`Release the request ${id}`}
         </button>
       )
     });
