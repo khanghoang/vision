@@ -77,7 +77,7 @@ window.__returnMockResultWithRequestID = function(id, status, headerStr, respons
     }
   }
 
-  request && request.respond(status, headerStr, JSON.parse(responseStr));
+  request && request.respond(status, headerStr, JSON.stringify(responseStr));
   window.__removeRequestWithID(id);
 }
 
