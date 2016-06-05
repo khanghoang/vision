@@ -38,6 +38,18 @@ const compareXHRWithPatterns = (xhr, pattern) => {
 
 window.__makeID = makeID;
 
+window.__removeRequestWithID = function(id) {
+  var newRequests = window.requests.filter(function(q) {
+    if (q._id !== id) {
+      return q;
+    }
+  })
+
+  window.requests = newRequests;
+  window.postMessage({hello: JSON.stringify(window.requests)}, '*');
+}
+
+
 window.__returnOriginResultWithRequestID = function(id) {
   var i = 0;
   var request;
@@ -51,6 +63,7 @@ window.__returnOriginResultWithRequestID = function(id) {
 
   sinon.FakeXMLHttpRequest.defake(request, [request.method, request.url, true, "", ""])
   request.send();
+  window.__removeRequestWithID(id);
 }
 
 window.__returnMockResultWithRequestID = function(id, status, headerStr, responseStr) {
@@ -64,7 +77,8 @@ window.__returnMockResultWithRequestID = function(id, status, headerStr, respons
     }
   }
 
-  request && request.respond(status, headerStr, JSON.stringify(responseStr));
+  request && request.respond(status, headerStr, JSON.parse(responseStr));
+  window.__removeRequestWithID(id);
 }
 
 window.__vision_onCreateCallback = (xhr) => {

@@ -316,7 +316,6 @@ class App extends Component {
               onSubmit={this.onCreateRequest}
               />
         </div>
-        <RaisedButton label="Modal Dialog" onClick={this.handleOpen} />
         <Dialog
           title="Response with data"
           actions={actions}

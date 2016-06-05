@@ -139,12 +139,16 @@ class CreatePatternForm extends Component {
           ref='text'
           key='text'
           />
-        <RaisedButton
+        {
+        this.props.compad ?
+        (<RaisedButton
           label="Create request"
           primary={true}
           onClick={this.onSubmit}
           style={style}
           />
+          ) : null
+        }
         </form>
     )
   }
