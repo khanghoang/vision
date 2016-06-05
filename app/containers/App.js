@@ -17,8 +17,10 @@ class App extends Component {
     this.enableXHR = this.enableXHR.bind(this);
     this.disableXHR = this.disableXHR.bind(this);
     this.clearCachedPatterns = this.clearCachedPatterns.bind(this);
+    this.onToggle = this.onToggle.bind(this);
 
     this.state = {
+      endableXHR: false,
       requests: [],
       patterns: []
     }
@@ -118,25 +120,6 @@ class App extends Component {
       };
     `;
 
-
-    // var root;
-    // if (typeof window !== 'undefined') { // Browser window
-    //   root = window;
-    // } else if (typeof self !== 'undefined') { // Web Worker
-    //   root = self;
-    // } else { // Other environments
-    //   root = this;
-    // }
-    // window.XMLHttpRequest = sinon.useFakeXMLHttpRequest();\
-    //   debugger;
-    // window.XMLHttpRequest.onCreate = function (xhr) {\
-    //   requests.push(xhr);
-    // window.postMessage({hello: JSON.stringify(requests)}, '*');
-    // setTimeout(_ => {
-    //   window.__vision_onCreateCallback(xhr);
-    // }, 0);
-    // };
-
     chrome.devtools.inspectedWindow.eval(
       command,
       function(result, isException) {
@@ -177,6 +160,19 @@ class App extends Component {
       command,
       cb
     );
+  }
+
+  onToggle() {
+    const isEnabled = !this.state.enableXHR;
+    if (isEnabled) {
+      this.enableXHR();
+    } else {
+      this.disableXHR();
+    }
+
+    this.setState({
+      enableXHR: isEnabled
+    });
   }
 
   onDeletePattern(patternID) {
@@ -244,6 +240,8 @@ class App extends Component {
             <Toggle
               label="Enable Mock"
               labelPosition="right"
+              toggled={this.state.enableXHR}
+              onToggle={this.onToggle}
               style={{
                 'width': '150px',
                 'float': 'right',
@@ -268,8 +266,6 @@ class App extends Component {
               Submit
             </button>
           </form>
-          <button onClick={this.enableXHR} type="button" className="btn btn-success">Enable XHR</button>
-          <button onClick={this.disableXHR} type="button" className="btn btn-danger">Disable XHR</button>
           <button onClick={this.clearCachedPatterns} type="button" className="btn btn-danger">clear Cached Patterns</button>
           <ul>
             {groupPatterns}
