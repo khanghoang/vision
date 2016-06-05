@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Field from '../containers/Field';
 import _ from 'lodash';
+import TextField from 'material-ui/TextField';
 
 class CreatePatternForm extends Component {
   constructor() {
@@ -71,33 +72,41 @@ class CreatePatternForm extends Component {
   render() {
     return (
       <form>
-        <Field
-          inputType='text'
-          onValueChange={this.onValueChange}
+        <TextField
+          id="text-field-controlled"
+          hintText="HTTP Method (ex: POST, GET...)"
+          onChange={this.onValueChange}
           name='method'
           ref='method'
           key='method'
+          fullWidth={true}
         />
-        <Field
-          inputType='text'
+        <TextField
+          id="text-field-controlled"
+          hintText="URL (ex: https://google.com/abc)"
           onValueChange={this.onValueChange}
           name='url'
           ref='url'
           key='url'
+          fullWidth={true}
         />
-        <Field
-          inputType='number'
+        <TextField
+          id="text-field-controlled"
+          hintText="HTTP status code (ex: 200, 401, 500...)"
           onValueChange={this.onValueChange}
           name='status'
           ref='status'
           key='status'
+          fullWidth={true}
         />
-        <Field
-          inputType='textarea'
+        <TextField
+          id="text-field-controlled"
+          hintText="Custom header"
           onValueChange={this.onValueChange}
           name='headers'
           ref='headers'
           key='headers'
+          fullWidth={true}
         />
         <label>
           <input

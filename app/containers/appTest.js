@@ -3,6 +3,8 @@ import CreatePatternForm from '../components/CreatePatternForm';
 import genID from '../helpers/makeID';
 import _ from 'lodash';
 import CodeEditorComponent from '../components/CodeEditorComponent';
+import AppBar from 'material-ui/AppBar';
+import Toggle from 'material-ui/Toggle';
 
 require('../../panel/panel.js');
 // ^^ correct code aboveroot
@@ -236,14 +238,25 @@ class App extends Component {
 
     return (
       <div>
-        <nav className="navbar navbar-default">
-          <div className="container-fluid">
-            <div className="navbar-header">
-              <a className="navbar-brand" href="#">
-                <h2>The Vision</h2>
-              </a>
-            </div>
-          </div>
+        <AppBar
+          title="Vision"
+          children={
+            <Toggle
+              label="Enable Mock"
+              labelPosition="right"
+              style={{
+                'width': '150px',
+                'float': 'right',
+                'margin': 'auto 0'
+              }}
+              labelStyle={{
+                'color': '#fff',
+                'font-size': '12px'
+              }}
+              />
+          }
+          />
+        <div style={{"margin": "24px;"}} >
           <form className="navbar-form navbar-left" role="search">
             <div className="form-group">
               <input ref='input' type="text" className="form-control" placeholder="Search" />
@@ -258,15 +271,15 @@ class App extends Component {
           <button onClick={this.enableXHR} type="button" className="btn btn-success">Enable XHR</button>
           <button onClick={this.disableXHR} type="button" className="btn btn-danger">Disable XHR</button>
           <button onClick={this.clearCachedPatterns} type="button" className="btn btn-danger">clear Cached Patterns</button>
-        </nav>
-        <ul>
-          {groupPatterns}
-        </ul>
-        {groupBtns}
-        <CreatePatternForm
-          onSubmit={this.onCreateRequest}
-        />
-        <CodeEditorComponent />
+          <ul>
+            {groupPatterns}
+            </ul>
+            {groupBtns}
+            <CreatePatternForm
+              onSubmit={this.onCreateRequest}
+              />
+              <CodeEditorComponent />
+        </div>
       </div>
     );
   }
