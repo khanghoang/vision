@@ -29,6 +29,8 @@ class CodeEditorComponent extends Component {
         value={this.state.value}
         name="codeEditor"
         editorProps={{$blockScrolling: true}}
+        height="250px"
+        width="100%"
         />
     )
   }

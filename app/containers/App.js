@@ -5,7 +5,6 @@ import _ from 'lodash';
 import CodeEditorComponent from '../components/CodeEditorComponent';
 import AppBar from 'material-ui/AppBar';
 import Toggle from 'material-ui/Toggle';
-import Drawer from '../components/Drawer';
 
 require('../../panel/panel.js');
 // ^^ correct code aboveroot
@@ -65,7 +64,6 @@ class App extends Component {
   }
 
   onCreateRequest(data) {
-    debugger;
     const pattern = _.assign({}, data, {_id: genID()});
     const dataString = JSON.stringify(pattern);
     var command = `
@@ -178,7 +176,6 @@ class App extends Component {
   }
 
   onDeletePattern(patternID) {
-    // debugger;
     const patterns = _.filter(this.state.patterns, (p) => {
       return p._id !== patternID;
     });
