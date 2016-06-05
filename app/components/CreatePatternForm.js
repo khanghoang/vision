@@ -140,7 +140,7 @@ class CreatePatternForm extends Component {
           key='text'
           />
         {
-        this.props.compad ?
+        !this.props.compad ?
         (<RaisedButton
           label="Create request"
           primary={true}
