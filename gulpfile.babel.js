@@ -23,6 +23,11 @@ gulp.task('webpack', function() {
   .pipe(gulp.dest('./app/script'))
 });
 
+gulp.task('copy-sinon', () => {
+  return gulp.src('./app/script.babel/sinon.js')
+  .pipe(gulp.dest('./app/script'))
+});
+
 gulp.task('babel', () => {
   return gulp.src('app/scripts.babel/**/*.js')
       .pipe($.babel({
@@ -39,10 +44,11 @@ gulp.task('watch', ['babel'], function() {
     'app/script.babel/**/*.js',
   ]).on('change', $.livereload.reload);
 
-  gulp.watch('./app/script.babel/**/*', ['babel']);
+  gulp.watch('./app/script.babel/**/*', ['copy-sinon', 'babel']);
 });
 
 gulp.task('default', [
+  'copy-sinon',
   'webpack',
   'watch'
 ])

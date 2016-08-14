@@ -25,10 +25,10 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["injected-sinon.js"],
-      "run_at": "document_end",
+      "js": ["./app/script/sinon.js"],
+      "run_at": "document_start",
       "all_frames": true
     }
   ],
-  "web_accessible_resources": ["app/script/sinon.js"]
+  "web_accessible_resources": ["sinon.js"]
 }

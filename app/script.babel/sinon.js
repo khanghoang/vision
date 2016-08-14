@@ -1,5 +1,5 @@
 var s = document.createElement('script');
-s.src = chrome.extension.getURL('dist/sinon.js');
+s.src = chrome.extension.getURL('./app/script/sinon.js');
 (document.head||document.documentElement).appendChild(s);
 s.onload = function() {
   s.parentNode.removeChild(s);
