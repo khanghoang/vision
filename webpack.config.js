@@ -23,16 +23,7 @@ module.exports = {
 
   devtool: 'source-map',
 
-  resolve: {
-    alias: {
-      'sinon': 'sinon/pkg/sinon'
-    }
-  },
-
   module: {
-    noParse: [
-      /sinon/
-    ],
     loaders: [
       {
         // babel

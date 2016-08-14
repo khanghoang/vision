@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import queryString from 'query-string';
 import _ from 'lodash';
-import makeID from '../app/helpers/makeID';
+import makeID from '../helpers/makeID';
 
 window.sinon = sinon;
 window.requests = [];
