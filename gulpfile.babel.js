@@ -20,7 +20,7 @@ gulp.task('webpack', function() {
     devtoolsPanel
   ])
   .pipe(webpack(webpackConfig))
-  .pipe(gulp.dest('./dist'))
+  .pipe(gulp.dest('./app/script'))
 });
 
 gulp.task('babel', () => {
@@ -35,11 +35,11 @@ gulp.task('watch', ['babel'], function() {
   $.livereload.listen();
 
   gulp.watch([
-    'app/*.html',
-    'app/**/*.js',
+    'app/script.babel/*.html',
+    'app/script.babel/**/*.js',
   ]).on('change', $.livereload.reload);
 
-  gulp.watch('./app/**/*', ['webpack']);
+  gulp.watch('./app/script.babel/**/*', ['babel']);
 });
 
 gulp.task('default', [

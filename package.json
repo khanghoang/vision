@@ -25,6 +25,7 @@
     "file-loader": "^0.8.5",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
+    "gulp-livereload": "^3.8.1",
     "gulp-load-plugins": "^1.2.4",
     "gulp-size": "^2.1.0",
     "jsdom": "^8.0.2",

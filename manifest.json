@@ -10,11 +10,11 @@
   "devtools_page": "devtools.html",
   "background": {
     "scripts": [
-      "app/chromereload.js",
-      "dist/background.js"
+      "app/script.babel/chromereload.js",
+      "app/script/background.js"
     ]
   },
-  "options_page": "./dist/index.html",
+  "options_page": "./app/script/index.html",
   "content_security_policy": "script-src 'self'; object-src 'self'; style-src * 'unsafe-inline'; img-src 'self' data:;",
   "permissions": [
     "tabs",
@@ -30,5 +30,5 @@
       "all_frames": true
     }
   ],
-  "web_accessible_resources": ["dist/sinon.js"]
+  "web_accessible_resources": ["app/script/sinon.js"]
 }
