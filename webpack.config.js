@@ -12,6 +12,7 @@ module.exports = {
   entry: {
     background: './background/background.js',
     panel: './panel/panel.js',
+    sinon: './background/sinon.js',
     html: "./index.html"
   },
 

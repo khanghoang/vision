@@ -44,11 +44,10 @@ gulp.task('watch', ['babel'], function() {
     'app/script.babel/**/*.js',
   ]).on('change', $.livereload.reload);
 
-  gulp.watch('./app/script.babel/**/*', ['copy-sinon', 'babel']);
+  gulp.watch('./app/script.babel/**/*', ['watch']);
 });
 
 gulp.task('default', [
-  'copy-sinon',
   'webpack',
   'watch'
 ])
