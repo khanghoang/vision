@@ -1,7 +1,12 @@
 {
   "name": "The Vision",
-  "version": "0.1",
+  "version": "0.0.1",
+  "manifest_version": 2,
   "description": "Mock requests on the fly",
+  "icons": {
+    "16": "images/icon-16.png",
+    "128": "images/icon-128.png"
+  },
   "devtools_page": "devtools.html",
   "background": {
     "scripts": [
@@ -16,7 +21,6 @@
     "https://*/*",
     "storage"
   ],
-  "manifest_version": 2,
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
