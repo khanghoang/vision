@@ -10,6 +10,7 @@
   "devtools_page": "devtools.html",
   "background": {
     "scripts": [
+      "app/chromereload.js",
       "dist/background.js"
     ]
   },

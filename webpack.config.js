@@ -7,15 +7,17 @@ var query = {
 
 module.exports = {
 
-  context: __dirname + '/app',
+  context: __dirname + '/app/script.babel',
+
   entry: {
-    javascript: './index.js',
+    background: './background/background.js',
+    panel: './panel/panel.js',
     html: "./index.html"
   },
 
   output: {
-    filename: 'index.js',
-    path: __dirname + '/dist'
+    filename: '[name].js',
+    path: __dirname + '/app/script'
   },
 
   devtool: 'source-map',
@@ -50,7 +52,6 @@ module.exports = {
   },
 
   plugins: [
-    new webpack.HotModuleReplacementPlugin()
   ]
 
 }

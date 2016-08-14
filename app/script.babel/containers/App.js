@@ -10,8 +10,8 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 
-require('../../panel/panel.js');
-// ^^ correct code aboveroot
+require('../panel/panel.js');
+// ^^ correct code above
 const storage = chrome.storage.local;
 
 class App extends Component {
