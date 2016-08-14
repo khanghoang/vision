@@ -16,27 +16,17 @@ var query = {
 }
 
 gulp.task('webpack', function() {
-  return gulp.src([
-    devtoolsPanel
-  ])
+  return gulp.src('app/scripts.babel/**/*.js')
   .pipe(webpack(webpackConfig))
   .pipe(gulp.dest('./app/script'))
 });
 
 gulp.task('copy-sinon', () => {
-  return gulp.src('./app/script.babel/sinon.js')
+  return gulp.src('./app/script.babel/injected-sinon.js')
   .pipe(gulp.dest('./app/script'))
 });
 
-gulp.task('babel', () => {
-  return gulp.src('app/scripts.babel/**/*.js')
-      .pipe($.babel({
-              presets: ['es2015']
-            }))
-      .pipe(gulp.dest('app/scripts'));
-});
-
-gulp.task('watch', ['babel'], function() {
+gulp.task('watch', ['webpack'], function() {
   $.livereload.listen();
 
   gulp.watch([
@@ -44,7 +34,7 @@ gulp.task('watch', ['babel'], function() {
     'app/script.babel/**/*.js',
   ]).on('change', $.livereload.reload);
 
-  gulp.watch('./app/script.babel/**/*', ['watch']);
+  gulp.watch('./app/script.babel/**/*', ['webpack']);
 });
 
 gulp.task('default', [
