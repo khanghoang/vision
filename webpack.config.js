@@ -12,7 +12,7 @@ module.exports = {
   entry: {
     background: './background/background.js',
     panel: './panel/panel.js',
-    sinon: './background/sinon.js',
+    backgroundSinon: './background/sinon.js',
     html: "./index.html"
   },
 
@@ -22,6 +22,12 @@ module.exports = {
   },
 
   devtool: 'source-map',
+
+  resolve: {
+    alias: {
+      'sinon': 'sinon/pkg/sinon'
+    }
+  },
 
   module: {
     loaders: [

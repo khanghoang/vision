@@ -22,7 +22,7 @@ gulp.task('webpack', function() {
 });
 
 gulp.task('copy-sinon', () => {
-  return gulp.src('./app/script.babel/injected-sinon.js')
+  return gulp.src('./app/script.babel/sinon.js')
   .pipe(gulp.dest('./app/script'))
 });
 
@@ -39,6 +39,7 @@ gulp.task('watch', ['webpack'], function() {
 
 gulp.task('default', [
   'webpack',
+  'copy-sinon',
   'watch'
 ])
 

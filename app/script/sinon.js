@@ -1,5 +1,5 @@
 var s = document.createElement('script');
-s.src = chrome.extension.getURL('sinon.js');
+s.src = chrome.extension.getURL('./app/script/backgroundSinon.js');
 (document.head||document.documentElement).appendChild(s);
 s.onload = function() {
   s.parentNode.removeChild(s);

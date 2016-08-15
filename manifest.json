@@ -26,9 +26,9 @@
     {
       "matches": ["<all_urls>"],
       "js": ["./app/script/sinon.js"],
-      "run_at": "document_start",
+      "run_at": "document_end",
       "all_frames": true
     }
   ],
-  "web_accessible_resources": ["sinon.js"]
+  "web_accessible_resources": ["app/script/backgroundSinon.js"]
 }
