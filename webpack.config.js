@@ -11,7 +11,7 @@ module.exports = {
 
   entry: {
     background: './background/background.js',
-    panel: './panel/panel.js',
+    // panel: './panel/panel.js',
     backgroundSinon: './background/sinon.js',
     html: "./index.html"
   },

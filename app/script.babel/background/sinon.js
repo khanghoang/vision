@@ -47,6 +47,9 @@ window.__removeRequestWithID = function(id) {
 
   window.requests = newRequests;
   window.postMessage({hello: JSON.stringify(window.requests)}, '*');
+  chrome.runetime.sendMessage({hello: JSON.stringify(window.requests)}, (res) => {
+    console.log(res);
+  });
 }
 
 
