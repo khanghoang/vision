@@ -3,7 +3,7 @@
 <img src="./logo.png">
 </p>
 
-####Hi there, I'm The Vision, the Chrome extension that helps you to mock the XHR request on the fly.
+Hi there, I'm The Vision, the Chrome extension that helps you to mock the XHR request on the flight.
 
 ## How do I work?
 ![Demo](./demo.gif)
