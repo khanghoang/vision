@@ -44,7 +44,7 @@
     "brace": "^0.8.0",
     "fetch-mock": "^4.1.1",
     "history": "^1.17.0",
-    "lodash": "^4.10.0",
+    "lodash": "^4.17.21",
     "material-ui": "^0.15.0",
     "query-string": "^4.1.0",
     "react": "^0.14.7",
